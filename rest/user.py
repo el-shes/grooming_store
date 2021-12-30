@@ -5,7 +5,6 @@ from flask_restful import Resource, reqparse
 from models.user import user_schema, users_schema, Role
 from service import user, master
 
-
 user_post_args = reqparse.RequestParser()
 user_post_args.add_argument("first_name", required=True)
 user_post_args.add_argument("last_name", required=True)
@@ -41,7 +40,7 @@ class UserById(Resource):
         args = user_post_args.parse_args()
         validate_user_info(args)
         updated_user = user.update_user(user_id, first_name=args["first_name"], last_name=args["last_name"],
-                                    role=args["role"], phone=args["phone"])
+                                        role=args["role"], phone=args["phone"])
         return user_schema.jsonify(updated_user)
 
     def get(self, user_id):

@@ -29,6 +29,11 @@ def get_breed(breed_id):
     return found_breed
 
 
+def validate_on_create(procedure_info):
+
+    pass
+
+
 def delete_breed(breed_id):
     breed.Breed.query.filter_by(id=breed_id).delete()
     db.session.commit()

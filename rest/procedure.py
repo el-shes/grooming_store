@@ -1,3 +1,5 @@
+import json
+from flask import Response, abort
 from flask_restful import Resource, reqparse
 
 from models.procedure import procedure_schema, procedures_schema
@@ -10,9 +12,17 @@ procedure_post_args.add_argument("duration")
 procedure_post_args.add_argument("master_ids", action="split")
 
 
+def validate_procedure_info(info):
+    errors = procedure.validate_on_create(info)
+    if errors:
+        result = json.dumps(errors)
+        abort(Response(result, 400))
+
+
 class Procedure(Resource):
     def post(self):
         args = procedure_post_args.parse_args()
+        validate_procedure_info(args)
         new_procedure = procedure.create_procedure(name=args["name"], basic_price=args["basic_price"],
                                                    duration=args["duration"])
         if args["master_ids"] is not None:
