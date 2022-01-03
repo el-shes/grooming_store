@@ -1,5 +1,7 @@
-from flask_restful import Resource, reqparse
+import json
 
+from flask_restful import Resource, reqparse
+from flask import Response, abort
 from models.breed import breed_schema, breeds_schema
 from service import breed
 
@@ -11,9 +13,17 @@ breed_post_args.add_argument("size_coefficient")
 breed_post_args.add_argument("image_link")
 
 
+def validate_breed_info(info):
+    errors = breed.validate_on_create(info)
+    if errors:
+        result = json.dumps(errors)
+        abort(Response(result, 400))
+
+
 class Breed(Resource):
     def post(self):
         args = breed_post_args.parse_args()
+        validate_breed_info(args)
         new_breed = breed.create_breed(name=args["name"], fur_coefficient=args["fur_coefficient"],
                                        size_coefficient=args["size_coefficient"], image_link=args["image_link"])
         return breed_schema.jsonify(new_breed)
