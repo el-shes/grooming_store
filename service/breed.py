@@ -1,3 +1,5 @@
+import re
+
 from models import breed
 from app import db
 
@@ -29,9 +31,35 @@ def get_breed(breed_id):
     return found_breed
 
 
-def validate_on_create(procedure_info):
+def get_breed_by_name(name):
+    found_breed = breed.Breed.query.filter_by(name=name).first()
+    return found_breed
 
-    pass
+
+def validate_float_input(digit_input, field_name, errors):
+    if digit_input is None:
+        errors[field_name] = "Can't be blank"
+    elif round(digit_input, 2) < 1.00:
+        errors[field_name] = "Should be 1.00 or greater"
+    elif isinstance(digit_input, int):
+        errors[field_name] = "Should be decimal"
+    elif not isinstance(digit_input, float):
+        errors[field_name] = "Should be decimal"
+
+
+def validate_on_create(breed_info):
+    errors = {}
+    if len(breed_info["name"]) == 0:
+        errors["name"] = "Can't be blank"
+    elif re.fullmatch(r"[A-Za-z ]+", breed_info["name"]) is None:
+        errors["name"] = "Invalid symbol"
+    elif get_breed_by_name(breed_info["name"]) is not None:
+        errors["name"] = "Breed already exists"
+    if len(breed_info["image_link"]) == 0:
+        errors["image_link"] = "Can't be blank"
+    validate_float_input(breed_info["fur_coefficient"], "fur_coefficient", errors)
+    validate_float_input(breed_info["size_coefficient"], "size_coefficient", errors)
+    return errors
 
 
 def delete_breed(breed_id):

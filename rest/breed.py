@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 
 from models.breed import breed_schema, breeds_schema
 from service import breed
-from app import api
+
 
 breed_post_args = reqparse.RequestParser()
 breed_post_args.add_argument("name")
