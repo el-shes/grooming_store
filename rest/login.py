@@ -16,4 +16,5 @@ class Login(Resource):
         if not is_correct_password:
             raise ValueError
         user_token = jwt.encode(user_by_phone.id, user_by_phone.role)
-        return user_token
+        header = [('Set-Cookie', f'user={user_token}')]
+        return {'message': ' Successfully logging in'}, 200, header

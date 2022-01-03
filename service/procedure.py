@@ -50,7 +50,7 @@ def validate_on_create(procedure_info):
     errors = {}
     if len(procedure_info["name"]) == 0:
         errors["name"] = "Can't be blank"
-    elif re.fullmatch(r"[A-Za-z ]+", procedure_info["name"]) is None:
+    elif re.fullmatch(r"[A-Za-z]+", procedure_info["name"]) is None:
         errors["name"] = "Invalid symbol"
     elif get_procedure_id_by_name(procedure_info["name"]) is not None:
         errors["name"] = "Procedure already exists"

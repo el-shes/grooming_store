@@ -39,12 +39,10 @@ def get_breed_by_name(name):
 def validate_float_input(digit_input, field_name, errors):
     if digit_input is None:
         errors[field_name] = "Can't be blank"
-    elif round(digit_input, 2) < 1.00:
-        errors[field_name] = "Should be 1.00 or greater"
-    elif isinstance(digit_input, int):
-        errors[field_name] = "Should be decimal"
     elif not isinstance(digit_input, float):
         errors[field_name] = "Should be decimal"
+    elif round(digit_input, 2) < 1.00:
+        errors[field_name] = "Should be 1.00 or greater"
 
 
 def validate_on_create(breed_info):

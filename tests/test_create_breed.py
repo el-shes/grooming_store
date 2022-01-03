@@ -73,7 +73,7 @@ class CreateProcedureTest(unittest.TestCase):
         result = breed.validate_on_create(mock_breed)
         self.assertTrue(result)
         self.assertTrue("fur_coefficient" in result)
-        self.assertEqual(result["fur_coefficient"], "Should be 1.00 or greater")
+        self.assertEqual(result["fur_coefficient"], "Should be decimal")
 
     def test_validate_fur_coefficient_less_than_one_float_input(self):
         """
@@ -132,7 +132,7 @@ class CreateProcedureTest(unittest.TestCase):
         result = breed.validate_on_create(mock_breed)
         self.assertTrue(result)
         self.assertTrue("size_coefficient" in result)
-        self.assertEqual(result["size_coefficient"], "Should be 1.00 or greater")
+        self.assertEqual(result["size_coefficient"], "Should be decimal")
 
     def test_validate_size_coefficient_less_than_one_float_input(self):
         """
