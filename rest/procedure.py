@@ -38,6 +38,7 @@ class ProcedureById(Resource):
 
     def put(self, procedure_id):
         args = procedure_post_args.parse_args()
+        validate_procedure_info(args)
         new_procedure = procedure.update_procedure(procedure_id, name=args["name"], basic_price=args["basic_price"],
                                                    duration=args["duration"])
         return procedure_schema.jsonify(new_procedure)

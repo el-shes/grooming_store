@@ -1,4 +1,6 @@
 from flask_restful import Resource, reqparse
+from flask import make_response
+from models.user import user_schema
 from service import user, jwt
 
 user_post_args = reqparse.RequestParser()
@@ -17,4 +19,5 @@ class Login(Resource):
             raise ValueError
         user_token = jwt.encode(user_by_phone.id, user_by_phone.role)
         header = [('Set-Cookie', f'user={user_token}')]
-        return {'message': ' Successfully logging in'}, 200, header
+        user_to_return = user_schema.jsonify(user_by_phone)
+        return make_response(user_to_return, 200, header)

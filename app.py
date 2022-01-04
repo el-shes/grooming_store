@@ -11,7 +11,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # to supress warnings
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 api = Api(app)
-CORS(app)
+cors = CORS(app, support_credentials=True)
 migrate = Migrate(app, db)
 
 if __name__ == '__main__':
@@ -21,6 +21,15 @@ if __name__ == '__main__':
     from rest import user as user_rest
     from rest import master as master_rest
     from rest import login as login_rest
+
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Origin', 'http://127.0.0.1:3000')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,OPTIONS,PUT,POST,DELETE')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Content-Type', 'application/json')
+        return response
 
     api.add_resource(login_rest.Login, '/login')
 
