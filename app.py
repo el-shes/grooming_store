@@ -24,15 +24,16 @@ if __name__ == '__main__':
 
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Origin', 'http://127.0.0.1:3000')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,OPTIONS,PUT,POST,DELETE')
         response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,OPTIONS,PUT,POST,DELETE')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Content-Type', 'application/json')
+        if 'Access-Control-Allow-Origin' not in response.headers:
+            response.headers.add('Access-Control-Allow-Origin', 'http://127.0.0.1:3000')
         return response
 
     api.add_resource(login_rest.Login, '/login')
-
+    api.add_resource(login_rest.Verify, '/verify')
     api.add_resource(breed_rest.Breed, '/breed')
     api.add_resource(breed_rest.BreedById, '/breed/<int:breed_id>')
 

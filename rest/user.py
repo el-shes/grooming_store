@@ -20,15 +20,19 @@ def validate_user_info(info):
         abort(Response(result, 400))
 
 
+def post():
+    args = user_post_args.parse_args()
+    validate_user_info(args)
+    if not args["password"]:
+        args["password"] = "123"
+    new_user = user.create_user(first_name=args["first_name"], last_name=args["last_name"],
+                                password=args["password"], role=args["role"], phone=args["phone"])
+    if new_user.role == Role.MASTER:
+        master.create_master(new_user.id)
+    return user_schema.jsonify(new_user)
+
+
 class User(Resource):
-    def post(self):
-        args = user_post_args.parse_args()
-        validate_user_info(args)
-        new_user = user.create_user(first_name=args["first_name"], last_name=args["last_name"],
-                                    password="123", role=args["role"], phone=args["phone"])
-        if new_user.role == Role.MASTER:
-            master.create_master(new_user.id)
-        return user_schema.jsonify(new_user)
 
     def get(self):
         return users_schema.jsonify(user.get_all())
