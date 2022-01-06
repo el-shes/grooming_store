@@ -18,7 +18,7 @@ class CreateUserTest(unittest.TestCase):
         """
         Validates user's information passed on registration
         """
-        mock_user = {"first_name": "Mary Jane", "last_name": "Bill's", "role": "CLIENT", "phone": "1234567890"}
+        mock_user = {"first_name": "Mary Jane", "last_name": "Bill's", "role": "CLIENT", "phone": "5555665577"}
         result = user.validate_on_create(mock_user)
         self.assertFalse(result)
 
