@@ -6,6 +6,8 @@ def encode(user_id, role):
     encoded = jwt.encode({"id": user_id, "role": role.name}, key, algorithm="HS256")
     return encoded
 
-def decode():
-    pass
 
+def decode(encoded_token):
+    key = "secret"
+    decoded = jwt.decode(encoded_token, key, algorithms=["HS256"])
+    return decoded

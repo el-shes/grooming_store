@@ -11,6 +11,9 @@ from marshmallow import fields
 
 
 class Role(enum.Enum):
+    """
+    Declaring role class for possible User's roles
+    """
     ADMIN = 'admin'
     MASTER = 'master'
     CLIENT = 'client'
