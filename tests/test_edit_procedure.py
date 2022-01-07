@@ -29,22 +29,23 @@ class CreateUserTest(unittest.TestCase):
         """
         Validates procedure with name that already exists
         """
-        mock_procedure = procedure.create_procedure("Bath and paint", "400", "60")
-        procedure_to_update = procedure.create_procedure("Nailtrim", "300", "30")
-        info_for_procedure = {"name": "Bath and paint", "basic_price": "300", "duration": "30"}
+        mock_procedure = procedure.create_procedure("Bath and paint", 400, 60)
+        procedure_to_update = procedure.create_procedure("Nailtrim", 300, 30)
+        info_for_procedure = {"name": "Bath and paint", "basic_price": 300, "duration": 30}
         result = procedure.validate_on_update(info_for_procedure, procedure_to_update.id)
         self.assertTrue(result)
         self.assertTrue("name" in result)
         self.assertEqual(result["name"], "Procedure already exists")
         procedure.delete_procedure(procedure_to_update.id)
+        procedure.delete_procedure(mock_procedure.id)
         db.session.commit()
 
     def test_validate_wrong_name_procedure(self):
         """
         Validates procedure with wrong name
         """
-        procedure_to_update = procedure.create_procedure("Nailtrim", "300", "30")
-        info_for_procedure = {"name": "##air", "basic_price": "300", "duration": "30"}
+        procedure_to_update = procedure.create_procedure("Nailtrim", 300, 30)
+        info_for_procedure = {"name": "##air", "basic_price": 300, "duration": 30}
         result = procedure.validate_on_update(info_for_procedure, procedure_to_update.id)
         self.assertTrue(result)
         self.assertTrue("name" in result)
@@ -56,8 +57,8 @@ class CreateUserTest(unittest.TestCase):
         """
         Validates procedure with blank name input
         """
-        procedure_to_update = procedure.create_procedure("Polish", "300", "30")
-        info_for_procedure = {"name": "", "basic_price": "300", "duration": "30"}
+        procedure_to_update = procedure.create_procedure("Polish", 300, 30)
+        info_for_procedure = {"name": "", "basic_price": 300, "duration": 30}
         result = procedure.validate_on_update(info_for_procedure, procedure_to_update.id)
         self.assertTrue(result)
         self.assertTrue("name" in result)
@@ -69,12 +70,12 @@ class CreateUserTest(unittest.TestCase):
         """
         Validates procedure with blank basic_price input
         """
-        procedure_to_update = procedure.create_procedure("Paw treatment", "400", "20")
-        info_for_procedure = {"name": "Paw treatment", "basic_price": "", "duration": "20"}
+        procedure_to_update = procedure.create_procedure("Paw treatment", 400, 20)
+        info_for_procedure = {"name": "Paw treatment", "basic_price": "", "duration": 20}
         result = procedure.validate_on_update(info_for_procedure, procedure_to_update.id)
         self.assertTrue(result)
         self.assertTrue("basic_price" in result)
-        self.assertEqual(result["basic_price"], "Can't be blank")
+        self.assertEqual(result["basic_price"], "Should be a number")
         procedure.delete_procedure(procedure_to_update.id)
         db.session.commit()
 
@@ -82,8 +83,8 @@ class CreateUserTest(unittest.TestCase):
         """
         Validates non-numeric basic_price input for procedure
         """
-        procedure_to_update = procedure.create_procedure("Paw treatment", "400", "20")
-        info_for_procedure = {"name": "Paw treatment", "basic_price": "two hundred", "duration": "20"}
+        procedure_to_update = procedure.create_procedure("Paw treatment", 400, 20)
+        info_for_procedure = {"name": "Paw treatment", "basic_price": "two hundred", "duration": 20}
         result = procedure.validate_on_update(info_for_procedure, procedure_to_update.id)
         self.assertTrue(result)
         self.assertTrue("basic_price" in result)
@@ -93,10 +94,10 @@ class CreateUserTest(unittest.TestCase):
 
     def test_validate_zero_basic_price_procedure(self):
         """
-        Validates procedure with "0" basic_price input
+        Validates procedure with 0 basic_price input
         """
-        procedure_to_update = procedure.create_procedure("Ear treatment", "400", "20")
-        info_for_procedure = {"name": "Ear treatment", "basic_price": "0", "duration": "20"}
+        procedure_to_update = procedure.create_procedure("Ear treatment", 400, 20)
+        info_for_procedure = {"name": "Ear treatment", "basic_price": 0, "duration": 20}
         result = procedure.validate_on_update(info_for_procedure, procedure_to_update.id)
         self.assertTrue(result)
         self.assertTrue("basic_price" in result)
@@ -108,8 +109,8 @@ class CreateUserTest(unittest.TestCase):
         """
         Validates too long basic_price input for procedure (bigger than 5 digits)
         """
-        procedure_to_update = procedure.create_procedure("Teeth treatment", "400", "20")
-        info_for_procedure = {"name": "Teeth treatment", "basic_price": "600344", "duration": "20"}
+        procedure_to_update = procedure.create_procedure("Teeth treatment", 400, 20)
+        info_for_procedure = {"name": "Teeth treatment", "basic_price": 600344, "duration": 20}
         result = procedure.validate_on_update(info_for_procedure, procedure_to_update.id)
         self.assertTrue(result)
         self.assertTrue("basic_price" in result)
@@ -121,12 +122,12 @@ class CreateUserTest(unittest.TestCase):
         """
         Validates procedure with blank duration input
         """
-        procedure_to_update = procedure.create_procedure("Coloring", "400", "20")
-        info_for_procedure = {"name": "Coloring", "basic_price": "400", "duration": ""}
+        procedure_to_update = procedure.create_procedure("Coloring", 400, 20)
+        info_for_procedure = {"name": "Coloring", "basic_price": 400, "duration": ""}
         result = procedure.validate_on_update(info_for_procedure, procedure_to_update.id)
         self.assertTrue(result)
         self.assertTrue("duration" in result)
-        self.assertEqual(result["duration"], "Can't be blank")
+        self.assertEqual(result["duration"], "Should be a number")
         procedure.delete_procedure(procedure_to_update.id)
         db.session.commit()
 
@@ -134,8 +135,8 @@ class CreateUserTest(unittest.TestCase):
         """
         Validates non-numeric duration input for procedure
         """
-        procedure_to_update = procedure.create_procedure("Paw treatment", "400", "20")
-        info_for_procedure = {"name": "Paw treatment", "basic_price": "400", "duration": "twenty"}
+        procedure_to_update = procedure.create_procedure("Paw treatment", 400, 20)
+        info_for_procedure = {"name": "Paw treatment", "basic_price": 400, "duration": "twenty"}
         result = procedure.validate_on_update(info_for_procedure, procedure_to_update.id)
         self.assertTrue(result)
         self.assertTrue("duration" in result)
@@ -145,7 +146,7 @@ class CreateUserTest(unittest.TestCase):
 
     def test_validate_zero_duration_procedure(self):
         """
-        Validates procedure with "0" duration input
+        Validates procedure with 0 duration input
         """
         procedure_to_update = procedure.create_procedure("Coloring", 400, 20)
         info_for_procedure = {"name": "Coloring", "basic_price": 400, "duration": 0}
@@ -160,8 +161,8 @@ class CreateUserTest(unittest.TestCase):
         """
         Validates too long duration input for procedure (bigger than 3 digits)
         """
-        procedure_to_update = procedure.create_procedure("Teeth treatment", "400", "20")
-        info_for_procedure = {"name": "Teeth treatment", "basic_price": "400", "duration": "3000"}
+        procedure_to_update = procedure.create_procedure("Teeth treatment", 400, 20)
+        info_for_procedure = {"name": "Teeth treatment", "basic_price": 400, "duration": 3000}
         result = procedure.validate_on_update(info_for_procedure, procedure_to_update.id)
         self.assertTrue(result)
         self.assertTrue("duration" in result)
@@ -179,6 +180,8 @@ class CreateUserTest(unittest.TestCase):
                                             info_for_procedure["basic_price"], info_for_procedure["duration"])
         self.assertTrue(result)
         self.assertEqual(500, result.basic_price)
+        procedure.delete_procedure(procedure_to_update.id)
+        db.session.commit()
 
     def tearDown(self):
         """

@@ -44,13 +44,15 @@ class RestUserTest(unittest.TestCase):
         """
         Checks user creation with existing phone
         """
-        user_service.create_user("Nancy", "Joel", "123", "MASTER", "1000000000")
+        test_user = user_service.create_user("Nancy", "Joel", "123", "MASTER", "1000000000")
         mock_user = json.dumps(
             {"first_name": "Becky", "last_name": "Bells", "phone": "1000000000", "password": "12345"})
         response = self.client.post('/user', data=mock_user, headers={"Content-Type": "application/json"})
         self.assertEqual(400, response.status_code)
         self.assertEqual("User with this phone number already exists",
                          json.loads(response.data.decode("utf-8"))["phone"])
+        user.delete_user(test_user.id)
+        db.session.commit()
 
     def test_user_post_without_password(self):
         """
@@ -65,7 +67,7 @@ class RestUserTest(unittest.TestCase):
         Check user creation with master role
         """
         masters_amount_before = master.get_all()
-        mock_user = json.dumps({"first_name": "Nancy", "last_name": "Drew", "role": "MASTER", "phone": "1111111111"})
+        mock_user = json.dumps({"first_name": "Nancy", "last_name": "Drew", "role": "MASTER", "phone": "1111611111"})
         response = self.client.post('/user', data=mock_user, headers={"Content-Type": "application/json"})
         masters_amount_after = master.get_all()
         self.assertEqual(200, response.status_code)
@@ -112,7 +114,9 @@ class RestUserTest(unittest.TestCase):
         self.assertEqual("MASTER", update_response.json["role"])
 
     def test_user_get_by_id(self):
-        """Tests whether get response gets existing user by_id"""
+        """
+        Tests whether get response gets existing user by_id
+        """
         mock_user_1 = json.dumps(
             {"first_name": "Curt", "last_name": "Weller", "phone": "3311111111", "password": "12345"})
         response_1 = self.client.post('/user', data=mock_user_1, headers={"Content-Type": "application/json"})

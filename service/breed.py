@@ -37,6 +37,13 @@ def get_breed_by_name(name):
 
 
 def validate_float_input(digit_input, field_name, errors):
+    """
+    Validation of number inputs of create/update procedure
+    :param digit_input: number to validate
+    :param field_name: name of number field
+    :param errors: dictionary of errors occurred on create/update
+    :return: dictionary of errors if any
+    """
     if digit_input is None:
         errors[field_name] = "Can't be blank"
     elif not isinstance(digit_input, float):
@@ -45,19 +52,37 @@ def validate_float_input(digit_input, field_name, errors):
         errors[field_name] = "Should be 1.00 or greater"
 
 
-def validate_on_create(breed_info):
+def basic_validation(breed_info):
+    """
+    Basic validation of the breed parameters passed on creation/update breed
+    :param breed_info: dictionary of fields - info to validate
+    :return: dictionary of errors if any
+    """
     errors = {}
     if len(breed_info["name"]) == 0:
         errors["name"] = "Can't be blank"
     elif re.fullmatch(r"[A-Za-z ]+", breed_info["name"]) is None:
         errors["name"] = "Invalid symbol"
-    elif get_breed_by_name(breed_info["name"]) is not None:
-        errors["name"] = "Breed already exists"
     if len(breed_info["image_link"]) == 0:
         errors["image_link"] = "Can't be blank"
     validate_float_input(breed_info["fur_coefficient"], "fur_coefficient", errors)
     validate_float_input(breed_info["size_coefficient"], "size_coefficient", errors)
     return errors
+
+
+def validate_on_create(breed_info):
+    errors = basic_validation(breed_info)
+    if get_breed_by_name(breed_info["name"]) is not None:
+        errors["name"] = "Breed already exists"
+    return errors
+
+
+def validate_on_update(breed_info, breed_id):
+    errors = basic_validation(breed_info)
+    breed_by_name = get_breed_by_name(breed_info["name"])
+    if breed_by_name is not None and breed_by_name.id != breed_id:
+        errors["phone"] = "User with this phone number already exists"
+        return errors
 
 
 def delete_breed(breed_id):

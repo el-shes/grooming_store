@@ -17,7 +17,7 @@ migrate = Migrate(app, db)
 if __name__ == '__main__':
 
     from rest import breed as breed_rest
-    from rest import procedure as produce_rest
+    from rest import procedure as procedure_rest
     from rest import user as user_rest
     from rest import master as master_rest
     from rest import login as login_rest
@@ -37,8 +37,8 @@ if __name__ == '__main__':
     api.add_resource(breed_rest.Breed, '/breed')
     api.add_resource(breed_rest.BreedById, '/breed/<int:breed_id>')
 
-    api.add_resource(produce_rest.Procedure, '/procedure')
-    api.add_resource(produce_rest.ProcedureById, '/procedure/<int:procedure_id>')
+    api.add_resource(procedure_rest.Procedure, '/procedure')
+    api.add_resource(procedure_rest.ProcedureById, '/procedure/<int:procedure_id>')
 
     api.add_resource(user_rest.User, '/user')
     api.add_resource(user_rest.UserById, '/user/<string:user_id>')

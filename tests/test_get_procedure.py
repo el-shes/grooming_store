@@ -1,7 +1,7 @@
 from flask import Flask
 import unittest
 from app import db
-from service import procedure
+from service import procedure, breed
 
 
 class CreateUserTest(unittest.TestCase):
@@ -16,17 +16,31 @@ class CreateUserTest(unittest.TestCase):
 
     def test_get_by_id_correct_procedure(self):
         """
-
-        :return:
+        Testing correct get procedure by id service
         """
         mock_procedure = procedure.create_procedure("Paint", 400, 60)
         found_procedure = procedure.get_procedure(mock_procedure.id)
 
         self.assertTrue(found_procedure)
-        self.assertEqual(400, found_procedure["basic_price"])
+        self.assertEqual(400, found_procedure.basic_price)
+        self.assertEqual(60, found_procedure.duration)
         procedure.delete_procedure(mock_procedure.id)
         db.session.commit()
 
+    def test_correct_compute_total_price_procedure(self):
+        """
+        Testing correct computing of total price of the procedure
+        """
+        mock_procedure = procedure.create_procedure("Test compute", 500, 30)
+        mock_breed = breed.create_breed("Pug", 1.5, 2.5, "link")
+        total_price = procedure.compute_total_procedure_price(mock_procedure.id, mock_breed.id)
+        self.assertTrue(mock_procedure)
+        self.assertTrue(mock_breed)
+        self.assertTrue(total_price)
+        self.assertEqual(1875, total_price)
+        procedure.delete_procedure(mock_procedure.id)
+        breed.delete_breed(mock_breed.id)
+        db.session.commit()
 
     def tearDown(self):
         """

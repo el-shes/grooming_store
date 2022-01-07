@@ -7,8 +7,8 @@ from service import procedure, master_procedure
 
 procedure_post_args = reqparse.RequestParser()
 procedure_post_args.add_argument("name")
-procedure_post_args.add_argument("basic_price")
-procedure_post_args.add_argument("duration")
+procedure_post_args.add_argument("basic_price", type=int)
+procedure_post_args.add_argument("duration", type=int)
 procedure_post_args.add_argument("master_ids", action="split")
 
 
@@ -42,19 +42,6 @@ class ProcedureById(Resource):
         new_procedure = procedure.update_procedure(procedure_id, name=args["name"], basic_price=args["basic_price"],
                                                    duration=args["duration"])
         return procedure_schema.jsonify(new_procedure)
-
-    #
-    # def post(self, procedure_id):
-    #     args = procedure_post_args.parse_args()
-    #     all_masters_to_procedure = master_procedure.get_all_by_procedure_id(procedure_id)
-    #     master_ids_from_request = args["master_ids"]
-    #     for master_id in master_ids_from_request:
-    #         if master_id not in all_masters_to_procedure:
-    #             master_procedure.add_mapping(master_id, procedure_id)
-    #     for master_id in all_masters_to_procedure:
-    #         if master_id not in master_ids_from_request:
-    #             master_procedure.del_mapping(master_id, procedure_id)
-    #     return procedure_schema.jsonify(procedure.get_procedure(procedure_id))
 
     def get(self, procedure_id):
         return procedure_schema.jsonify(procedure.get_procedure(procedure_id))
