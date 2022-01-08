@@ -170,19 +170,6 @@ class CreateUserTest(unittest.TestCase):
         procedure.delete_procedure(procedure_to_update.id)
         db.session.commit()
 
-    def test_update_procedure(self):
-        """
-        Checks whether procedure is updated
-        """
-        procedure_to_update = procedure.create_procedure("Teeth treatment", 400, 20)
-        info_for_procedure = {"name": "Ear treatment", "basic_price": 500, "duration": 30}
-        result = procedure.update_procedure(procedure_to_update.id, info_for_procedure["name"],
-                                            info_for_procedure["basic_price"], info_for_procedure["duration"])
-        self.assertTrue(result)
-        self.assertEqual(500, result.basic_price)
-        procedure.delete_procedure(procedure_to_update.id)
-        db.session.commit()
-
     def tearDown(self):
         """
         Ensures that the database is emptied for next unit test

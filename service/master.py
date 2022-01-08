@@ -25,7 +25,18 @@ def get_all():
     return masters
 
 
-#possibly delete
+def get_all_from_list(ids):
+    masters = []
+    for master_id in ids:
+        masters.append(get_master(master_id))
+    return masters
+
+
+def get_master_by_user_id(user_id):
+    return master.Master.query.filter_by(user_id=user_id).first()
+
+
+# possibly delete
 def update_master(master_id, master_procedures):
     master_from_db = master.Master.query.get(master_id)
     master_from_db.master_procedures = master_procedures

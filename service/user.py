@@ -1,5 +1,3 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 from models import user
 from app import db
 import re

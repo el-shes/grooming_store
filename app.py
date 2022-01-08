@@ -21,6 +21,7 @@ if __name__ == '__main__':
     from rest import user as user_rest
     from rest import master as master_rest
     from rest import login as login_rest
+    from rest import master_procedure as master_procedure_rest
 
     @app.after_request
     def after_request(response):
@@ -34,6 +35,7 @@ if __name__ == '__main__':
 
     api.add_resource(login_rest.Login, '/login')
     api.add_resource(login_rest.Verify, '/verify')
+
     api.add_resource(breed_rest.Breed, '/breed')
     api.add_resource(breed_rest.BreedById, '/breed/<int:breed_id>')
 
@@ -44,6 +46,7 @@ if __name__ == '__main__':
     api.add_resource(user_rest.UserById, '/user/<string:user_id>')
 
     api.add_resource(master_rest.Master, '/master')
-    api.add_resource(master_rest.MasterById, '/<int:master_id>')
+    api.add_resource(master_rest.MasterById, '/master/<int:master_id>')
+    api.add_resource(master_procedure_rest.MasterProcedureById, '/master/procedure/<int:procedure_id>')
 
     app.run(debug=True)
