@@ -12,7 +12,7 @@ class Master(db.Model):
     user_id = Column(Integer, db.ForeignKey('user.id'))
     stars = Column(Integer)
     number_of_marks = Column(Integer)
-    #master_procedures = db.relationship('procedure', secondary='master_procedure', backref='procedure_masters')
+    # master_reservations = db.relationship('reservation')
 
     def __init__(self, user_id):
         self.user_id = user_id

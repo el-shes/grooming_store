@@ -1,19 +1,20 @@
 from app import db, ma
-
-
+from sqlalchemy import Column, String, Integer, Time, Date
 # declaring Reservation Model
 
 
 class Reservation(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    master_id = db.Column(db.Integer, db.ForeignKey('master.id'))
-    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
-    breed_id = db.Column(db.Integer, db.ForeignKey('breed.id'))
-    procedure_id = db.Column(db.Integer, db.ForeignKey('procedure.id'))
-    time_from = db.Column(db.Time, nullable=False)
-    time_to = db.Column(db.Time, nullable=False)
-    date = db.Column(db.Date)
-    final_price = db.Column(db.Integer)
+    __tablename__ = 'reservation'
+    __table_args__ = {'extend_existing': True}
+    id = Column(Integer, primary_key=True)
+    master_id = Column(Integer, db.ForeignKey('master.id'))
+    client_id = Column(Integer, db.ForeignKey('user.id'))
+    breed_id = Column(Integer, db.ForeignKey('breed.id'))
+    procedure_id = Column(Integer, db.ForeignKey('procedure.id'))
+    time_from = Column(Time, nullable=False)
+    time_to = Column(Time, nullable=False)
+    date = Column(Date)
+    final_price = Column(Integer)
 
     def __init__(self, master_id, client_id, breed_id, procedure_id, time_from, time_to, date, final_price):
         self.master_id = master_id

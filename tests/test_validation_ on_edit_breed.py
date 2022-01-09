@@ -55,14 +55,16 @@ class CreateUserTest(unittest.TestCase):
         """
         Validates breed with such name exists on update
         """
+        mock_breed = breed.create_breed("Spaniel", 3.4, 2.5, "link")
         breed_to_update = breed.create_breed("Labrador Retriever", 2.5, 4.5, "link")
-        info_for_update = {"name": "Labrador Retriever", "fur_coefficient": 3.5, "size_coefficient": 4.5,
+        info_for_update = {"name": "Spaniel", "fur_coefficient": 3.5, "size_coefficient": 4.5,
                            "image_link": "link"}
         result = breed.validate_on_update(info_for_update, breed_to_update.id)
         self.assertTrue(result)
         self.assertTrue("name" in result)
         self.assertEqual(result["name"], "Breed already exists")
         breed.delete_breed(breed_to_update.id)
+        breed.delete_breed(mock_breed.id)
         db.session.commit()
 
     def test_validate_blank_fur_coefficient_update(self):

@@ -17,7 +17,6 @@ class CreateUserTest(unittest.TestCase):
     def test_get_by_id_correct_user(self):
         """
         Testing correct user get service by id
-        :return:
         """
         mock_user = user.create_user("Jane", "Eyer", "123", "CLIENT", "1231234567", )
         found_user = user.get_user(mock_user.id)

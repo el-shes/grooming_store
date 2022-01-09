@@ -81,8 +81,8 @@ def validate_on_update(breed_info, breed_id):
     errors = basic_validation(breed_info)
     breed_by_name = get_breed_by_name(breed_info["name"])
     if breed_by_name is not None and breed_by_name.id != breed_id:
-        errors["phone"] = "User with this phone number already exists"
-        return errors
+        errors["name"] = "Breed already exists"
+    return errors
 
 
 def delete_breed(breed_id):
