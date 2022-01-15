@@ -62,13 +62,22 @@ def calculate_available_slots(all_slots_for_date, all_reservations_for_date, pro
     return possible_slots
 
 
-def time_slot_validation(time_from, time_to, date, master_id):
+def validate_master_for_time_slot_creation(master_id):
     errors = {}
+    if not master_id:
+        errors["master_id"] = "Choose master first"
+    elif master.get_master(master_id) is None:
+        errors["master_id"] = "No such master"
+    return errors
+
+
+def time_slot_validation(time_from, time_to, date, master_id):
     start_work = convert_to_datetime(date, datetime.datetime.strptime('9:00', '%H:%M').time())
     end_work = convert_to_datetime(date, datetime.datetime.strptime('21:00', '%H:%M').time())
     time_from = convert_to_datetime(date, time_from)
     time_to = convert_to_datetime(date, time_to)
     current_date = datetime.datetime.now().date()
+    errors = validate_master_for_time_slot_creation(master_id)
     if date < current_date:
         errors["date"] = "Can't put a time slot for past date"
     master_time_slots_for_a_day = get_slots_by_master_id_and_date(master_id, date)
@@ -92,7 +101,7 @@ def time_slot_validation(time_from, time_to, date, master_id):
             master_time_slot_for_a_day_starting_hour = convert_to_datetime(date,
                                                                            master_time_slot_for_a_day.starting_hour)
             master_time_slot_for_a_day_ending_hour = convert_to_datetime(date, master_time_slot_for_a_day.ending_hour)
-            if master_time_slot_for_a_day_ending_hour < time_to <= master_time_slot_for_a_day_starting_hour:
+            if master_time_slot_for_a_day_ending_hour >= time_to > master_time_slot_for_a_day_starting_hour:
                 is_valid_slot = False
         if not is_valid_slot:
             errors["time_to"] = "Slot with this ending time exists"
