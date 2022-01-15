@@ -14,14 +14,16 @@ class CreateUserTest(unittest.TestCase):
         with self.app.app_context():
             db.create_all()
 
-    def test_get_by_id_correct_procedure(self):
+    def test_create_and_get_by_id_correct_procedure(self):
         """
-        Testing correct get procedure by id service
+        Testing correct procedure creation and get procedure by id service
         """
         mock_procedure = procedure.create_procedure("Paint", 400, 60)
         found_procedure = procedure.get_procedure(mock_procedure.id)
 
+        self.assertTrue(mock_procedure)
         self.assertTrue(found_procedure)
+        self.assertEqual("Paint", mock_procedure.name)
         self.assertEqual(400, found_procedure.basic_price)
         self.assertEqual(60, found_procedure.duration)
         procedure.delete_procedure(mock_procedure.id)

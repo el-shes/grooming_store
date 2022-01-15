@@ -21,7 +21,9 @@ if __name__ == '__main__':
     from rest import user as user_rest
     from rest import master as master_rest
     from rest import login as login_rest
+    from rest import reservation as reservation_rest
     from rest import master_procedure as master_procedure_rest
+    from rest import master_time_slots as time_slot_rest
 
     @app.after_request
     def after_request(response):
@@ -48,5 +50,10 @@ if __name__ == '__main__':
     api.add_resource(master_rest.Master, '/master')
     api.add_resource(master_rest.MasterById, '/master/<int:master_id>')
     api.add_resource(master_procedure_rest.MasterProcedureById, '/master/procedure/<int:procedure_id>')
+
+    api.add_resource(time_slot_rest.MasterTimeSlot, '/time-slot')
+
+    api.add_resource(reservation_rest.Reservation, '/reservation')
+    api.add_resource(reservation_rest.ReservationById, '/reservation/<int:reservation_id>')
 
     app.run(debug=True)

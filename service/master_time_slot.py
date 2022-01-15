@@ -26,7 +26,7 @@ def get_all_slots():
 
 
 def get_available_slots_for_procedure_on_date(date, master_id, procedure_id):
-    all_slots_for_date = get_slot_by_master_id_and_date(master_id, date)
+    all_slots_for_date = get_slots_by_master_id_and_date(master_id, date)
     all_reservations_for_date = reservation.get_reservations_by_master_id_and_date(master_id, date)
     procedure_duration = procedure.get_procedure(procedure_id).duration
     available_slots = calculate_available_slots(all_slots_for_date, all_reservations_for_date, procedure_duration)
@@ -35,6 +35,10 @@ def get_available_slots_for_procedure_on_date(date, master_id, procedure_id):
 
 def get_slot_by_id(time_slot_id):
     return master_time_slot.MasterTimeSlot.query.get(time_slot_id)
+
+
+def get_slots_by_master_id_and_date(master_id, date):
+    return master_time_slot.MasterTimeSlot.query.filter_by(master_id=master_id, date=date)
 
 
 def delete_master_time_slot_by_id(time_slot_id):
@@ -58,7 +62,51 @@ def calculate_available_slots(all_slots_for_date, all_reservations_for_date, pro
     return possible_slots
 
 
+def time_slot_validation(time_from, time_to, date, master_id):
+    errors = {}
+    start_work = convert_to_datetime(date, datetime.datetime.strptime('9:00', '%H:%M').time())
+    end_work = convert_to_datetime(date, datetime.datetime.strptime('21:00', '%H:%M').time())
+    time_from = convert_to_datetime(date, time_from)
+    time_to = convert_to_datetime(date, time_to)
+    current_date = datetime.datetime.now().date()
+    if date < current_date:
+        errors["date"] = "Can't put a time slot for past date"
+    master_time_slots_for_a_day = get_slots_by_master_id_and_date(master_id, date)
+    if time_from < start_work or time_from > (end_work - datetime.timedelta(minutes=30)):
+        errors["time_from"] = "Slot should be placed from 9 to 20.30"
+    else:
+        is_valid_slot = True
+        for master_time_slot_for_a_day in master_time_slots_for_a_day:
+            master_time_slot_for_a_day_starting_hour = convert_to_datetime(date,
+                                                                           master_time_slot_for_a_day.starting_hour)
+            master_time_slot_for_a_day_ending_hour = convert_to_datetime(date, master_time_slot_for_a_day.ending_hour)
+            if master_time_slot_for_a_day_starting_hour <= time_from < master_time_slot_for_a_day_ending_hour:
+                is_valid_slot = False
+        if not is_valid_slot:
+            errors["time_from"] = "Slot with this starting time exists"
+    if time_to > end_work or time_to < (start_work + datetime.timedelta(minutes=30)):
+        errors["time_to"] = "Slot should be placed from 9.30 to 21"
+    else:
+        is_valid_slot = True
+        for master_time_slot_for_a_day in master_time_slots_for_a_day:
+            master_time_slot_for_a_day_starting_hour = convert_to_datetime(date,
+                                                                           master_time_slot_for_a_day.starting_hour)
+            master_time_slot_for_a_day_ending_hour = convert_to_datetime(date, master_time_slot_for_a_day.ending_hour)
+            if master_time_slot_for_a_day_ending_hour < time_to <= master_time_slot_for_a_day_starting_hour:
+                is_valid_slot = False
+        if not is_valid_slot:
+            errors["time_to"] = "Slot with this ending time exists"
+    return errors
+
+
 def is_slot_free_from_reservations(all_reservations_for_date, possible_ending, possible_starting):
+    """
+    Checks whether time slot is free and can be booked
+    :param all_reservations_for_date: list of all reservations for a date
+    :param possible_ending:
+    :param possible_starting:
+    :return:
+    """
     is_valid_slot = True
     for reserved_time in all_reservations_for_date:
         time_from = convert_to_datetime(reserved_time.date, reserved_time.time_from)
@@ -76,6 +124,3 @@ def convert_to_datetime(date, time):
                              day=date.day,
                              hour=time.hour, minute=time.minute)
 
-
-def get_slot_by_master_id_and_date(master_id, date):
-    return master_time_slot.MasterTimeSlot.query.filter_by(master_id=master_id, date=date)

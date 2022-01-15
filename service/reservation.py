@@ -26,7 +26,7 @@ def get_reservation_by_id(reservation_id):
 
 
 def get_reservations_by_user_id(user_id):
-    return reservation.Reservation.query.filter_by(user_id=user_id)
+    return reservation.Reservation.query.filter_by(client_id=user_id)
 
 
 def get_reservations_by_master_id_and_date(master_id, date):

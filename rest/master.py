@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 
 from models.master import masters_schema, master_schema
-from service import master, master_procedure
+from service import master, master_procedure, user
 
 master_post_args = reqparse.RequestParser()
 master_post_args.add_argument("user_id")
@@ -12,7 +12,11 @@ master_post_args.add_argument("master_procedures")
 class Master(Resource):
 
     def get(self):
-        return masters_schema.jsonify(master.get_all())
+        all_masters = master.get_all()
+        for mstr in all_masters:
+            usr = user.get_user(mstr.user_id)
+            mstr.name = usr.first_name + " " +usr.last_name
+        return masters_schema.jsonify(all_masters)
 
 
 class MasterById(Resource):

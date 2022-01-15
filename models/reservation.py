@@ -1,4 +1,5 @@
 from app import db, ma
+from marshmallow import fields
 from sqlalchemy import Column, String, Integer, Time, Date
 # declaring Reservation Model
 
@@ -30,6 +31,26 @@ class Reservation(db.Model):
 class ReservationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Reservation
+        load_instance = True
+        ordered = True
+    master_name = fields.Method("get_master_name")
+    procedure_name = fields.Method("get_procedure_name")
+    breed_name = fields.Method("get_breed_name")
+
+    def get_master_name(self, obj):
+        if hasattr(obj, "master_name"):
+            return obj.master_name
+        return None
+
+    def get_procedure_name(self, obj):
+        if hasattr(obj, "procedure_name"):
+            return obj.procedure_name
+        return None
+
+    def get_breed_name(self, obj):
+        if hasattr(obj, "breed_name"):
+            return obj.breed_name
+        return None
 
 
 reservation_schema = ReservationSchema()

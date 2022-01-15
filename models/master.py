@@ -1,6 +1,7 @@
 """
 declaring The Master Model
 """
+from marshmallow import fields
 from sqlalchemy import Column, Integer
 from app import db, ma
 
@@ -23,6 +24,14 @@ class Master(db.Model):
 class MasterSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Master
+        load_instance = True
+        ordered = True
+    name = fields.Method("get_name")
+
+    def get_name(self, obj):
+        if hasattr(obj, "name"):
+            return obj.name
+        return None
 
 
 master_schema = MasterSchema()
