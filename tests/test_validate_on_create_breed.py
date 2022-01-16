@@ -48,12 +48,13 @@ class CreateProcedureTest(unittest.TestCase):
         """
         breed_1 = breed.create_breed("Cane Corso", 1.2, 7.7, "link")
         mock_breed = {"name": "Cane Corso", "fur_coefficient": 2.0, "size_coefficient": 4.5, "image_link": "link"}
-        result = breed.validate_on_create(mock_breed)
-        self.assertTrue(result)
-        self.assertTrue("name" in result)
-        self.assertEqual(result["name"], "Breed already exists")
-        breed.delete_breed(breed_1.id)
-        db.session.commit()
+        try:
+            result = breed.validate_on_create(mock_breed)
+            self.assertTrue(result)
+            self.assertTrue("name" in result)
+            self.assertEqual(result["name"], "Breed already exists")
+        finally:
+            breed.delete_breed(breed_1.id)
 
     def test_validate_fur_coefficient_blank_input(self):
         """

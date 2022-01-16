@@ -47,12 +47,14 @@ class RestUserTest(unittest.TestCase):
         test_user = user_service.create_user("Nancy", "Joel", "123", "MASTER", "1000000000")
         mock_user = json.dumps(
             {"first_name": "Becky", "last_name": "Bells", "phone": "1000000000", "password": "12345"})
-        response = self.client.post('/user', data=mock_user, headers={"Content-Type": "application/json"})
-        self.assertEqual(400, response.status_code)
-        self.assertEqual("User with this phone number already exists",
-                         json.loads(response.data.decode("utf-8"))["phone"])
-        user.delete_user(test_user.id)
-        db.session.commit()
+        try:
+            response = self.client.post('/user', data=mock_user, headers={"Content-Type": "application/json"})
+            self.assertEqual(400, response.status_code)
+            self.assertEqual("User with this phone number already exists",
+                             json.loads(response.data.decode("utf-8"))["phone"])
+        finally:
+            user.delete_user(test_user.id)
+            db.session.commit()
 
     def test_user_post_without_password(self):
         """

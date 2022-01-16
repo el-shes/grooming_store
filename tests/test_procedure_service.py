@@ -19,15 +19,17 @@ class CreateUserTest(unittest.TestCase):
         Testing correct procedure creation and get procedure by id service
         """
         mock_procedure = procedure.create_procedure("Paint", 400, 60)
-        found_procedure = procedure.get_procedure(mock_procedure.id)
+        try:
+            found_procedure = procedure.get_procedure(mock_procedure.id)
 
-        self.assertTrue(mock_procedure)
-        self.assertTrue(found_procedure)
-        self.assertEqual("Paint", mock_procedure.name)
-        self.assertEqual(400, found_procedure.basic_price)
-        self.assertEqual(60, found_procedure.duration)
-        procedure.delete_procedure(mock_procedure.id)
-        db.session.commit()
+            self.assertTrue(mock_procedure)
+            self.assertTrue(found_procedure)
+            self.assertEqual("Paint", mock_procedure.name)
+            self.assertEqual(400, found_procedure.basic_price)
+            self.assertEqual(60, found_procedure.duration)
+        finally:
+            procedure.delete_procedure(mock_procedure.id)
+            db.session.commit()
 
     def test_update_procedure(self):
         """
@@ -35,12 +37,14 @@ class CreateUserTest(unittest.TestCase):
         """
         procedure_to_update = procedure.create_procedure("Teeth treatment", 400, 20)
         info_for_procedure = {"name": "Ear treatment", "basic_price": 500, "duration": 30}
-        result = procedure.update_procedure(procedure_to_update.id, info_for_procedure["name"],
-                                            info_for_procedure["basic_price"], info_for_procedure["duration"])
-        self.assertTrue(result)
-        self.assertEqual(500, result.basic_price)
-        procedure.delete_procedure(procedure_to_update.id)
-        db.session.commit()
+        try:
+            result = procedure.update_procedure(procedure_to_update.id, info_for_procedure["name"],
+                                                info_for_procedure["basic_price"], info_for_procedure["duration"])
+            self.assertTrue(result)
+            self.assertEqual(500, result.basic_price)
+        finally:
+            procedure.delete_procedure(procedure_to_update.id)
+            db.session.commit()
 
     def test_correct_compute_total_price_procedure(self):
         """
@@ -49,13 +53,15 @@ class CreateUserTest(unittest.TestCase):
         mock_procedure = procedure.create_procedure("Test compute", 500, 30)
         mock_breed = breed.create_breed("Pug", 1.5, 2.5, "link")
         total_price = procedure.compute_total_procedure_price(mock_procedure.id, mock_breed.id)
-        self.assertTrue(mock_procedure)
-        self.assertTrue(mock_breed)
-        self.assertTrue(total_price)
-        self.assertEqual(1875, total_price)
-        procedure.delete_procedure(mock_procedure.id)
-        breed.delete_breed(mock_breed.id)
-        db.session.commit()
+        try:
+            self.assertTrue(mock_procedure)
+            self.assertTrue(mock_breed)
+            self.assertTrue(total_price)
+            self.assertEqual(1875, total_price)
+        finally:
+            procedure.delete_procedure(mock_procedure.id)
+            breed.delete_breed(mock_breed.id)
+            db.session.commit()
 
     def tearDown(self):
         """

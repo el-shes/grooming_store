@@ -108,12 +108,14 @@ class CreateUserTest(unittest.TestCase):
         """
         user_1 = user.create_user("Nancy", "Joel", "123", "MASTER", "0123456789")
         mock_user = {"first_name": "Jei", "last_name": "Mark", "role": "MASTER", "phone": "0123456789"}
-        result = user.validate_on_create(mock_user)
-        self.assertTrue(result)
-        self.assertTrue("phone" in result)
-        self.assertEqual(result["phone"], "User with this phone number already exists")
-        user.delete_user(user_1.id)
-        db.session.commit()
+        try:
+            result = user.validate_on_create(mock_user)
+            self.assertTrue(result)
+            self.assertTrue("phone" in result)
+            self.assertEqual(result["phone"], "User with this phone number already exists")
+        finally:
+            user.delete_user(user_1.id)
+            db.session.commit()
 
     def tearDown(self):
         """

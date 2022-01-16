@@ -38,7 +38,7 @@ def get_slot_by_id(time_slot_id):
 
 
 def get_slots_by_master_id_and_date(master_id, date):
-    return master_time_slot.MasterTimeSlot.query.filter_by(master_id=master_id, date=date)
+    return master_time_slot.MasterTimeSlot.query.filter_by(master_id=master_id, date=date).all()
 
 
 def delete_master_time_slot_by_id(time_slot_id):
@@ -56,7 +56,8 @@ def calculate_available_slots(all_slots_for_date, all_reservations_for_date, pro
             is_valid_slot = is_slot_free_from_reservations(all_reservations_for_date, possible_ending,
                                                            possible_starting)
             if is_valid_slot:
-                possible_slots.append({"start": possible_starting, "end": possible_ending})
+                possible_slots.append({"start": possible_starting.strftime("%H:%M"),
+                                       "end": possible_ending.strftime("%H:%M")})
             possible_starting = possible_starting + datetime.timedelta(minutes=30)
             possible_ending = possible_starting + datetime.timedelta(minutes=procedure_duration)
     return possible_slots

@@ -22,12 +22,14 @@ class CreateProcedureTest(unittest.TestCase):
         user_2 = user.create_user("NancyA", "JoelA", "1234", "MASTER", "0123456788")
         master.create_master(user_1.id)
         master.create_master(user_2.id)
-        result = master.get_all_from_list([user_1.id, user_2.id])
-        self.assertTrue(result)
-        self.assertEqual(2, len(result))
-        user.delete_user(user_1.id)
-        user.delete_user(user_2.id)
-        db.session.commit()
+        try:
+            result = master.get_all_from_list([user_1.id, user_2.id])
+            self.assertTrue(result)
+            self.assertEqual(2, len(result))
+        finally:
+            user.delete_user(user_1.id)
+            user.delete_user(user_2.id)
+            db.session.commit()
 
     def tearDown(self):
         """

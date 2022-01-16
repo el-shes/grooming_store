@@ -25,16 +25,18 @@ class CreateProcedureTest(unittest.TestCase):
         starting = datetime.datetime.strptime('10:00', '%H:%M').time()
         ending = datetime.datetime.strptime('16:00', '%H:%M').time()
         result = master_time_slot.create_master_time_slot(master_id, date, starting, ending)
-        self.assertTrue(result)
-        self.assertEqual(10, result.starting_hour.hour)
-        self.assertEqual(16, result.ending_hour.hour)
-        self.assertEqual(24, result.date.day)
-        self.assertEqual(2, result.date.month)
-        self.assertEqual(2022, result.date.year)
-        user.delete_user(mock_user.id)
-        master.delete_master(master_id)
-        master_time_slot.delete_master_time_slot_by_id(result.id)
-        db.session.commit()
+        try:
+            self.assertTrue(result)
+            self.assertEqual(10, result.starting_hour.hour)
+            self.assertEqual(16, result.ending_hour.hour)
+            self.assertEqual(24, result.date.day)
+            self.assertEqual(2, result.date.month)
+            self.assertEqual(2022, result.date.year)
+        finally:
+            user.delete_user(mock_user.id)
+            master.delete_master(master_id)
+            master_time_slot.delete_master_time_slot_by_id(result.id)
+            db.session.commit()
 
     def test_update_master_time_slot(self):
         """
@@ -49,15 +51,17 @@ class CreateProcedureTest(unittest.TestCase):
         new_date = datetime.datetime.strptime('21/03/2022', '%d/%m/%Y').date()
         new_starting = datetime.datetime.strptime('16:00', '%H:%M').time()
         new_ending = datetime.datetime.strptime('21:00', '%H:%M').time()
-        result = master_time_slot.update_master_time_slot(created_slot.id, master_id, new_date, new_starting,
-                                                          new_ending)
-        self.assertTrue(result)
-        self.assertEqual(16, result.starting)
-        self.assertEqual(21, result.ending)
-        user.delete_user(mock_user.id)
-        master.delete_master(master_id)
-        master_time_slot.delete_master_time_slot_by_id(created_slot.id)
-        db.session.commit()
+        try:
+            result = master_time_slot.update_master_time_slot(created_slot.id, master_id, new_date, new_starting,
+                                                              new_ending)
+            self.assertTrue(result)
+            self.assertEqual(16, result.starting)
+            self.assertEqual(21, result.ending)
+        finally:
+            user.delete_user(mock_user.id)
+            master.delete_master(master_id)
+            master_time_slot.delete_master_time_slot_by_id(created_slot.id)
+            db.session.commit()
 
     def test_get_all_slots(self):
         """
@@ -72,18 +76,20 @@ class CreateProcedureTest(unittest.TestCase):
         ending = datetime.datetime.strptime('20:00', '%H:%M').time()
         created_slot1 = master_time_slot.create_master_time_slot(master_id1, date, starting, ending)
         created_slot2 = master_time_slot.create_master_time_slot(master_id2, date, starting, ending)
-        result = master_time_slot.get_all_slots()
-        self.assertTrue(result)
-        self.assertEqual(created_slot1.id, result[0].id)
-        self.assertEqual(created_slot2.id, result[1].id)
-        self.assertEqual(12, result[0].starting_hour)
-        user.delete_user(mock_user1.id)
-        user.delete_user(mock_user2.id)
-        master.delete_master(master_id1)
-        master.delete_master(master_id2)
-        master_time_slot.delete_master_time_slot_by_id(created_slot1.id)
-        master_time_slot.delete_master_time_slot_by_id(created_slot2.id)
-        db.session.commit()
+        try:
+            result = master_time_slot.get_all_slots()
+            self.assertTrue(result)
+            self.assertEqual(created_slot1.id, result[0].id)
+            self.assertEqual(created_slot2.id, result[1].id)
+            self.assertEqual(12, result[0].starting_hour)
+        finally:
+            user.delete_user(mock_user1.id)
+            user.delete_user(mock_user2.id)
+            master.delete_master(master_id1)
+            master.delete_master(master_id2)
+            master_time_slot.delete_master_time_slot_by_id(created_slot1.id)
+            master_time_slot.delete_master_time_slot_by_id(created_slot2.id)
+            db.session.commit()
 
     def test_delete_master_time_slot(self):
         """

@@ -31,19 +31,21 @@ class CreateUserTest(unittest.TestCase):
         final_price = procedure.compute_total_procedure_price(procedure_id, breed_id)
         result = reservation.create_reservation(master_id, user_id, breed_id, procedure_id,
                                                 time_from, time_to, date, final_price)
-        self.assertTrue(result)
-        self.assertEqual(master_id, result.master_id)
-        self.assertEqual(user_id, result.client_id)
-        self.assertEqual(breed_id, result.breed_id)
-        self.assertEqual(procedure_id, result.procedure_id)
-        self.assertEqual(1380, result.final_price)
-        user.delete_user(user_master.id)
-        user.delete_user(user_id)
-        master.delete_master(master_id)
-        breed.delete_breed(breed_id)
-        procedure.delete_procedure(procedure_id)
-        reservation.delete_reservation(result.id)
-        db.session.commit()
+        try:
+            self.assertTrue(result)
+            self.assertEqual(master_id, result.master_id)
+            self.assertEqual(user_id, result.client_id)
+            self.assertEqual(breed_id, result.breed_id)
+            self.assertEqual(procedure_id, result.procedure_id)
+            self.assertEqual(1380, result.final_price)
+        finally:
+            user.delete_user(user_master.id)
+            user.delete_user(user_id)
+            master.delete_master(master_id)
+            breed.delete_breed(breed_id)
+            procedure.delete_procedure(procedure_id)
+            reservation.delete_reservation(result.id)
+            db.session.commit()
 
     def test_delete_reservation(self):
         """
@@ -60,17 +62,19 @@ class CreateUserTest(unittest.TestCase):
         final_price = procedure.compute_total_procedure_price(procedure_id, breed_id)
         result = reservation.create_reservation(master_id, user_id, breed_id, procedure_id,
                                                 time_from, time_to, date, final_price)
-        reservation.delete_reservation(result.id)
-        deleted_reservation_query = reservation.get_reservation_by_id(result.id)
-        self.assertTrue(result)
-        self.assertEqual(None, deleted_reservation_query)
-        user.delete_user(user_master.id)
-        user.delete_user(user_id)
-        master.delete_master(master_id)
-        breed.delete_breed(breed_id)
-        procedure.delete_procedure(procedure_id)
-        reservation.delete_reservation(result.id)
-        db.session.commit()
+        try:
+            reservation.delete_reservation(result.id)
+            deleted_reservation_query = reservation.get_reservation_by_id(result.id)
+            self.assertTrue(result)
+            self.assertEqual(None, deleted_reservation_query)
+        finally:
+            user.delete_user(user_master.id)
+            user.delete_user(user_id)
+            master.delete_master(master_id)
+            breed.delete_breed(breed_id)
+            procedure.delete_procedure(procedure_id)
+            reservation.delete_reservation(result.id)
+            db.session.commit()
 
     def test_create_test_reservation(self):
         user_master = user.get_user_by_phone("5554445554")

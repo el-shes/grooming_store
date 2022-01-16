@@ -12,10 +12,7 @@ master_post_args.add_argument("master_procedures")
 class Master(Resource):
 
     def get(self):
-        all_masters = master.get_all()
-        for mstr in all_masters:
-            usr = user.get_user(mstr.user_id)
-            mstr.name = usr.first_name + " " +usr.last_name
+        all_masters = master.set_masters_name(master.get_all())
         return masters_schema.jsonify(all_masters)
 
 
