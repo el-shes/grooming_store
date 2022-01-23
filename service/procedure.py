@@ -9,7 +9,7 @@ def compute_total_procedure_price(procedure_id, breed_id):
     size_coefficient = breed.get_breed(breed_id).size_coefficient
     fur_coefficient = breed.get_breed(breed_id).fur_coefficient
     total_price = basic_price * size_coefficient * fur_coefficient
-    return total_price
+    return round(total_price)
 
 
 def create_procedure(name, basic_price, duration):

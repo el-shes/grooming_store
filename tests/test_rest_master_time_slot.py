@@ -36,7 +36,7 @@ class RestMasterTimeSlotTest(unittest.TestCase):
         response = self.client.post('/time-slot', data=mock_time_slot, headers={"Content-Type": "application/json"})
         try:
             self.assertEqual(200, response.status_code)
-            self.assertEqual('04-09-2022', response.json["date"])
+            self.assertEqual('2022-04-09', response.json["date"])
             self.assertEqual('15:00:00', response.json["ending_hour"])
         finally:
             master_time_slot.delete_master_time_slot_by_id(response.json["id"])
@@ -51,7 +51,7 @@ class RestMasterTimeSlotTest(unittest.TestCase):
         master1 = master.create_master(user_master1.id)
         user_id = user_master1.id
         master_id = master1.id
-        procedure_id = procedure.create_procedure("Something", 200, 30).id
+        procedure_id = procedure.create_procedure("Something Test Slot", 200, 30).id
         date = datetime.datetime.strptime('9/4/2022', '%d/%m/%Y').date()
         starting = datetime.datetime.strptime('10:00', '%H:%M').time()
         ending = datetime.datetime.strptime('15:00', '%H:%M').time()
@@ -62,7 +62,7 @@ class RestMasterTimeSlotTest(unittest.TestCase):
         try:
             print(response.get_json())
             self.assertEqual(200, response.status_code)
-            self.assertEqual(20, len(response.json))
+            self.assertEqual(10, len(response.json))
             self.assertEqual("10:00", response.json[0]["start"])
             self.assertEqual("10:30", response.json[0]["end"])
         finally:
@@ -75,11 +75,11 @@ class RestMasterTimeSlotTest(unittest.TestCase):
         """
         Testing response on get time_slot operation
         """
-        user_master1 = user_service.create_user("Chi", "Dale", "431", "MASTER", "3532523242")
+        user_master1 = user_service.create_user("Chi", "Dale", "431", "MASTER", "3539523242")
         master1 = master.create_master(user_master1.id)
         user_id = user_master1.id
         master_id = master1.id
-        procedure_id = procedure.create_procedure("Something", 200, 30).id
+        procedure_id = procedure.create_procedure("Something Test", 200, 30).id
         date = datetime.datetime.strptime('9/4/2022', '%d/%m/%Y').date()
         starting = datetime.datetime.strptime('10:00', '%H:%M').time()
         ending = datetime.datetime.strptime('14:00', '%H:%M').time()
@@ -94,7 +94,7 @@ class RestMasterTimeSlotTest(unittest.TestCase):
         try:
             print(response.get_json())
             self.assertEqual(200, response.status_code)
-            self.assertEqual(26, len(response.json))
+            self.assertEqual(16, len(response.json))
             self.assertEqual("10:00", response.json[0]["start"])
             self.assertEqual("10:30", response.json[0]["end"])
         finally:

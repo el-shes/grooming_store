@@ -8,8 +8,8 @@ from service import breed
 
 breed_post_args = reqparse.RequestParser()
 breed_post_args.add_argument("name")
-breed_post_args.add_argument("fur_coefficient")
-breed_post_args.add_argument("size_coefficient")
+breed_post_args.add_argument("fur_coefficient", type=float)
+breed_post_args.add_argument("size_coefficient", type=float)
 breed_post_args.add_argument("image_link")
 
 
@@ -43,7 +43,7 @@ class BreedById(Resource):
 
     def put(self, breed_id):
         args = breed_post_args.parse_args()
-        validate_update_breed_info(args)
+        validate_update_breed_info(args, breed_id)
         new_breed = breed.update_breed(breed_id, name=args["name"], fur_coefficient=args["fur_coefficient"],
                                        size_coefficient=args["size_coefficient"],  image_link=args["image_link"])
         return breed_schema.jsonify(new_breed)

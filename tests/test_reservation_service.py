@@ -20,10 +20,10 @@ class CreateUserTest(unittest.TestCase):
         """
         Testing correct reservation creation
         """
-        user_master = user.create_user("Ana", "Conda", "345", "MASTER", "1232124354")
-        user_id = user.create_user("Betty", "Dove", "567", "CLIENT", "9878564313").id
+        user_master = user.create_user("Betty", "Conda", "345", "MASTER", "1232124356")
+        user_id = user.create_user("Anna", "Dove", "567", "CLIENT", "9878564313").id
         master_id = master.create_master(user_master.id).id
-        breed_id = breed.create_breed("Big boy", 2.3, 1.5, "link").id
+        breed_id = breed.create_breed("Goldendoodle", 2.3, 1.5, "link").id
         procedure_id = procedure.create_procedure("Teeth whitening", 400, 30).id
         time_from = datetime.datetime.strptime('12:00', '%H:%M').time()
         time_to = datetime.datetime.strptime('13:00', '%H:%M').time()
@@ -76,18 +76,18 @@ class CreateUserTest(unittest.TestCase):
             reservation.delete_reservation(result.id)
             db.session.commit()
 
-    def test_create_test_reservation(self):
-        user_master = user.get_user_by_phone("5554445554")
-        user_id = user.get_user_by_phone("4445554445").id
-        master_id = master.get_master_by_user_id(user_master.id).id
-        breed_id = breed.create_breed("Big boy", 2.3, 1.5, "link").id
-        procedure_id = procedure.create_procedure("Vse and bystro", 400, 30).id
-        time_from = datetime.datetime.strptime('12:00', '%H:%M').time()
-        time_to = datetime.datetime.strptime('13:00', '%H:%M').time()
-        date = datetime.datetime.strptime('20/02/2022', '%d/%m/%Y').date()
-        final_price = procedure.compute_total_procedure_price(procedure_id, breed_id)
-        result = reservation.create_reservation(master_id, user_id, breed_id, procedure_id,
-                                                time_from, time_to, date, final_price)
+    # def test_create_test_reservation(self):
+    #     user_master = user.get_user_by_phone("5554445554")
+    #     user_id = user.get_user_by_phone("4445554445").id
+    #     master_id = master.get_master_by_user_id(user_master.id).id
+    #     breed_id = breed.create_breed("Big boy", 2.3, 1.5, "link").id
+    #     procedure_id = procedure.create_procedure("Vse and bystro", 400, 30).id
+    #     time_from = datetime.datetime.strptime('12:00', '%H:%M').time()
+    #     time_to = datetime.datetime.strptime('13:00', '%H:%M').time()
+    #     date = datetime.datetime.strptime('20/02/2022', '%d/%m/%Y').date()
+    #     final_price = procedure.compute_total_procedure_price(procedure_id, breed_id)
+    #     result = reservation.create_reservation(master_id, user_id, breed_id, procedure_id,
+    #                                             time_from, time_to, date, final_price)
 
     def tearDown(self):
         """

@@ -65,13 +65,10 @@ class CreateUserTest(unittest.TestCase):
         Testing correct delete user service
         """
         mock_user = user.create_user("Arif", "Traynor", "1233", "ADMIN", "8831234567")
-        try:
-            user.delete_user(mock_user.id)
-            found_user = user.get_user(mock_user.id)
-            self.assertFalse(found_user)
-            self.assertEqual(None, found_user)
-        finally:
-            print("Success")
+        user.delete_user(mock_user.id)
+        found_user = user.get_user(mock_user.id)
+        self.assertFalse(found_user)
+        self.assertEqual(None, found_user)
 
     def tearDown(self):
         """

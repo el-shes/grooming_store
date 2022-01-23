@@ -33,7 +33,7 @@ class Reservation(Resource):
         client_decoded_token = jwt.decode(args["user"])
         client_id = client_decoded_token["id"]
         validate_reservation_create(args)
-        final_price = round(procedure.compute_total_procedure_price(args["procedure_id"], args["breed_id"]))
+        final_price = procedure.compute_total_procedure_price(args["procedure_id"], args["breed_id"])
         input_date = datetime.datetime.strptime(args["date"], '%d/%m/%Y').date()
         input_time_from = datetime.datetime.strptime(args["time_from"], '%H:%M').time()
         input_time_to = datetime.datetime.strptime(args["time_to"], '%H:%M').time()

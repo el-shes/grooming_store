@@ -24,6 +24,7 @@ if __name__ == '__main__':
     from rest import reservation as reservation_rest
     from rest import master_procedure as master_procedure_rest
     from rest import master_time_slots as time_slot_rest
+    from rest import final_price as final_price
 
     @app.after_request
     def after_request(response):
@@ -43,6 +44,7 @@ if __name__ == '__main__':
 
     api.add_resource(procedure_rest.Procedure, '/procedure')
     api.add_resource(procedure_rest.ProcedureById, '/procedure/<int:procedure_id>')
+    api.add_resource(final_price.FinalPrice, '/procedure/<int:procedure_id>/<int:breed_id>')
 
     api.add_resource(user_rest.User, '/user')
     api.add_resource(user_rest.UserById, '/user/<string:user_id>')

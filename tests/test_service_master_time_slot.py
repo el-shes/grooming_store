@@ -55,8 +55,8 @@ class CreateProcedureTest(unittest.TestCase):
             result = master_time_slot.update_master_time_slot(created_slot.id, master_id, new_date, new_starting,
                                                               new_ending)
             self.assertTrue(result)
-            self.assertEqual(16, result.starting)
-            self.assertEqual(21, result.ending)
+            self.assertEqual(16, result.starting_hour.hour)
+            self.assertEqual(21, result.ending_hour.hour)
         finally:
             user.delete_user(mock_user.id)
             master.delete_master(master_id)
@@ -67,11 +67,11 @@ class CreateProcedureTest(unittest.TestCase):
         """
         Testing get on all time slots
         """
-        mock_user1 = user.create_user("Steven", "Huskel", "123", "MASTER", "9090909090")
+        mock_user1 = user.create_user("Steven", "Huskel", "123", "MASTER", "9090909093")
         mock_user2 = user.create_user("Bob", "Davis", "123", "MASTER", "8080909090")
         master_id1 = master.create_master(mock_user1.id).id
         master_id2 = master.create_master(mock_user2.id).id
-        date = datetime.datetime.strptime('20/02/2022', '%d/%m/%Y').date()
+        date = datetime.datetime.strptime('26/02/2022', '%d/%m/%Y').date()
         starting = datetime.datetime.strptime('12:00', '%H:%M').time()
         ending = datetime.datetime.strptime('20:00', '%H:%M').time()
         created_slot1 = master_time_slot.create_master_time_slot(master_id1, date, starting, ending)
@@ -79,9 +79,8 @@ class CreateProcedureTest(unittest.TestCase):
         try:
             result = master_time_slot.get_all_slots()
             self.assertTrue(result)
-            self.assertEqual(created_slot1.id, result[0].id)
-            self.assertEqual(created_slot2.id, result[1].id)
-            self.assertEqual(12, result[0].starting_hour)
+            self.assertTrue(created_slot1 in result)
+            self.assertTrue(created_slot2 in result)
         finally:
             user.delete_user(mock_user1.id)
             user.delete_user(mock_user2.id)
@@ -95,7 +94,7 @@ class CreateProcedureTest(unittest.TestCase):
         """
         Tests whether time slot is deleted correctly
         """
-        mock_user = user.create_user("Steven", "Huskel", "123", "MASTER", "9090909090")
+        mock_user = user.create_user("Steven", "Huskel", "123", "MASTER", "9090909092")
         master_id = master.create_master(mock_user.id).id
         date = datetime.datetime.strptime('20/02/2022', '%d/%m/%Y').date()
         starting = datetime.datetime.strptime('12:00', '%H:%M').time()
@@ -103,13 +102,18 @@ class CreateProcedureTest(unittest.TestCase):
         created_slot = master_time_slot.create_master_time_slot(master_id, date, starting, ending)
         master_time_slot.delete_master_time_slot_by_id(created_slot.id)
         deleted_slot_query = master_time_slot.get_slot_by_id(created_slot.id)
-        self.assertEqual(None, deleted_slot_query)
+
+        try:
+            self.assertEqual(None, deleted_slot_query)
+        finally:
+            user.delete_user(mock_user.id)
+            db.session.commit()
 
     def test_calculate_available_slots(self):
         """
         Testing that all available slots for a date are computed
         """
-        mock_user = user.create_user("Steven", "Huskel", "123", "MASTER", "9090909090")
+        mock_user = user.create_user("Steven", "Huskel", "123", "MASTER", "9090909091")
         master_id = master.create_master(mock_user.id).id
         date = datetime.datetime.strptime('20/02/2022', '%d/%m/%Y').date()
         created_slot_1 = master_time_slot.create_master_time_slot(master_id, date,
@@ -120,7 +124,7 @@ class CreateProcedureTest(unittest.TestCase):
                                                                   datetime.datetime.strptime('19:00', '%H:%M').time())
 
         user_id = user.create_user("Betty", "Dove", "567", "CLIENT", "9878564313").id
-        breed_id = breed.create_breed("Big boy", 2.3, 1.5, "link").id
+        breed_id = breed.create_breed("Big Test", 2.3, 1.5, "link").id
         mock_procedure = procedure.create_procedure("Teeth whitening", 400, 60)
         procedure_id = mock_procedure.id
         final_price = procedure.compute_total_procedure_price(procedure_id, breed_id)
@@ -148,18 +152,16 @@ class CreateProcedureTest(unittest.TestCase):
             # 17:30-18:30
             # 18:00-19:00
             self.assertEqual(5, len(available_reservations))
-            self.assertEqual(9, available_reservations[0]["start"].hour)
-            self.assertEqual(10, available_reservations[0]["end"].hour)
-            self.assertEqual(11, available_reservations[1]["start"].hour)
-            self.assertEqual(12, available_reservations[1]["end"].hour)
-            self.assertEqual(17, available_reservations[2]["start"].hour)
-            self.assertEqual(18, available_reservations[2]["end"].hour)
-            self.assertEqual(17, available_reservations[3]["start"].hour)
-            self.assertEqual(30, available_reservations[3]["start"].minute)
-            self.assertEqual(18, available_reservations[3]["end"].hour)
-            self.assertEqual(30, available_reservations[3]["end"].minute)
-            self.assertEqual(18, available_reservations[4]["start"].hour)
-            self.assertEqual(19, available_reservations[4]["end"].hour)
+            self.assertEqual('09:00', available_reservations[0]["start"])
+            self.assertEqual('10:00', available_reservations[0]["end"])
+            self.assertEqual('11:00', available_reservations[1]["start"])
+            self.assertEqual('12:00', available_reservations[1]["end"])
+            self.assertEqual('17:00', available_reservations[2]["start"])
+            self.assertEqual('18:00', available_reservations[2]["end"])
+            self.assertEqual('17:30', available_reservations[3]["start"])
+            self.assertEqual('18:30', available_reservations[3]["end"])
+            self.assertEqual('18:00', available_reservations[4]["start"])
+            self.assertEqual('19:00', available_reservations[4]["end"])
         finally:
             user.delete_user(mock_user.id)
             master.delete_master(master_id)

@@ -1,5 +1,4 @@
 import datetime
-import json
 import flask_restful
 from flask import Flask
 import unittest
@@ -61,7 +60,7 @@ class RestReservationTest(unittest.TestCase):
             user.delete_user(user_client_id)
             user.delete_user(user_master_id)
             master_time_slot.delete_master_time_slot_by_id(new_time_slot_id)
-            reservation.delete_reservation(response.json["id"])
+            reservation.delete_reservation(response.json)
 
     def tearDown(self):
         """
