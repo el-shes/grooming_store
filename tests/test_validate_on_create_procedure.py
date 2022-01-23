@@ -38,12 +38,14 @@ class CreateProcedureTest(unittest.TestCase):
         """
         test_procedure = procedure.create_procedure("Bath", 500, 45)
         mock_procedure = {"name": "Bath", "basic_price": 800, "duration": 60}
-        result = procedure.validate_on_create(mock_procedure)
-        self.assertTrue(result)
-        self.assertTrue("name" in result)
-        self.assertEqual(result["name"], "Procedure already exists")
-        procedure.delete_procedure(test_procedure.id)
-        db.session.commit()
+        try:
+            result = procedure.validate_on_create(mock_procedure)
+            self.assertTrue(result)
+            self.assertTrue("name" in result)
+            self.assertEqual(result["name"], "Procedure already exists")
+        finally:
+            procedure.delete_procedure(test_procedure.id)
+            db.session.commit()
 
     def test_validate_procedure_blank_name_input(self):
         """

@@ -47,12 +47,14 @@ class RestUserTest(unittest.TestCase):
         test_user = user_service.create_user("Nancy", "Joel", "123", "MASTER", "1000000000")
         mock_user = json.dumps(
             {"first_name": "Becky", "last_name": "Bells", "phone": "1000000000", "password": "12345"})
-        response = self.client.post('/user', data=mock_user, headers={"Content-Type": "application/json"})
-        self.assertEqual(400, response.status_code)
-        self.assertEqual("User with this phone number already exists",
-                         json.loads(response.data.decode("utf-8"))["phone"])
-        user.delete_user(test_user.id)
-        db.session.commit()
+        try:
+            response = self.client.post('/user', data=mock_user, headers={"Content-Type": "application/json"})
+            self.assertEqual(400, response.status_code)
+            self.assertEqual("User with this phone number already exists",
+                             json.loads(response.data.decode("utf-8"))["phone"])
+        finally:
+            user.delete_user(test_user.id)
+            db.session.commit()
 
     def test_user_post_without_password(self):
         """
@@ -67,12 +69,17 @@ class RestUserTest(unittest.TestCase):
         Check user creation with master role
         """
         masters_amount_before = master.get_all()
-        mock_user = json.dumps({"first_name": "Nancy", "last_name": "Drew", "role": "MASTER", "phone": "1111611111"})
+        mock_user = json.dumps({"first_name": "Anie", "last_name": "Drew", "role": "MASTER", "phone": "1111611111"})
         response = self.client.post('/user', data=mock_user, headers={"Content-Type": "application/json"})
         masters_amount_after = master.get_all()
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(len(masters_amount_before) + 1, len(masters_amount_after))
-        self.assertEqual("MASTER", response.json["role"])
+        created_master_id = master.get_master_by_user_id(response.json["id"]).id
+        try:
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(len(masters_amount_before) + 1, len(masters_amount_after))
+            self.assertEqual("MASTER", response.json["role"])
+        finally:
+            master.delete_master(created_master_id)
+            user.delete_user(response.json["id"])
 
     def test_user_get_all_users(self):
         """
@@ -82,7 +89,7 @@ class RestUserTest(unittest.TestCase):
             {"first_name": "Becky", "last_name": "Bells", "phone": "1111111111", "password": "12345"})
         mock_user_1 = json.dumps({"first_name": "Nancy", "last_name": "Drew", "role": "MASTER", "phone": "1111167111"})
         self.client.post('/user', data=mock_user, headers={"Content-Type": "application/json"})
-        self.client.post('/user', data=mock_user_1, headers={"Content-Type": "application/json"})
+        created_user_response = self.client.post('/user', data=mock_user_1, headers={"Content-Type": "application/json"})
         get_response = self.client.get('/user')
         lst_of_users = get_response.get_json()
         sorted(lst_of_users, key=lambda user: user["phone"])
@@ -96,6 +103,7 @@ class RestUserTest(unittest.TestCase):
         self.assertEqual("Drew", lst_of_users[1]["last_name"])
         self.assertEqual("1111167111", lst_of_users[1]["phone"])
         self.assertEqual("MASTER", lst_of_users[1]["role"])
+        # user.delete_user(created_user_response.json["id"])
 
     def test_user_put_user(self):
         """

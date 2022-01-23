@@ -13,7 +13,7 @@ class Procedure(db.Model):
     name = Column(String, unique=True)
     basic_price = Column(Integer)
     duration = Column(Integer)
-    #procedure_masters = db.relationship('master', secondary='master_procedure', backref='master_procedures')
+    # procedure_reservations = db.relationship('reservation')
 
     def __init__(self, name, basic_price, duration):
         self.name = name

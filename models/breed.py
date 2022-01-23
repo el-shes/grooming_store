@@ -7,11 +7,13 @@ from app import db, ma
 
 class Breed(db.Model):
     __tablename__ = 'breed'
+    # __table_args__ = {'extend_existing': True}
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
     fur_coefficient = Column(Float)
     size_coefficient = Column(Float)
     image_link = Column(String)
+    # breed_reservations = db.relationship('reservation')
 
     def __init__(self, name, fur_coefficient, size_coefficient, image_link):
         self.name = name
