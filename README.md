@@ -25,7 +25,7 @@ App creates unique token for each user that stores in user’s browser cookies a
 ### Admin
 - CRUD for Breed
 - CRUD for Procedure
-- CRUD for Client, Master and Admit
+- CRUD for users with different roles registrations
 - Set working hours for Masters
 - Manage set of Procedures for Masters (in development)
 - Create Reservations (in development)
